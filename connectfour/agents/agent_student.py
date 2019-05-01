@@ -64,7 +64,6 @@ class StudentAgent(Agent):
                 
             moves.append( move )
             vals.append( self.dfMiniMax(next_state, depth + 1) )
-
         
         if depth % 2 == 1:
             bestVal = min(vals)
@@ -139,7 +138,6 @@ class StudentAgent(Agent):
         for row in board.board:
             #Concatenate row into a single string for easier evalutation
             rowString = ''.join(str(e) for e in row)
-            
             #Assign horizontal evaluation based on PLAYER_1 playing
             if current_player == PLAYER_1:
                 #Checking for a loss, this results in worst score -100
@@ -153,7 +151,7 @@ class StudentAgent(Agent):
                     board_evaluation += 5
                 #checking for opponent open 3 connected, defend if possible
                 elif any(x in rowString for x in h_connected3_player2):
-                    board_evaluation -= 4
+                    board_evaluation -= 8
                 #Checking for possible open 2 in a row
                 elif any(x in rowString for x in h_connected2_player1):
                     board_evaluation += 2
@@ -174,7 +172,7 @@ class StudentAgent(Agent):
                     board_evaluation += 5
                 #checking for opponent open 3 connected, defend if possible
                 elif any(x in rowString for x in h_connected3_player1):
-                    board_evaluation -= 4
+                    board_evaluation -= 8
                 #Checking for possible open 2 in a row
                 elif any(x in rowString for x in h_connected2_player2):
                     board_evaluation += 2
@@ -202,7 +200,7 @@ class StudentAgent(Agent):
                     board_evaluation += 5
                 #Checking for opponent vertical 3
                 elif v_connected2_player2 in columnString:
-                    board_evaluation -= 4
+                    board_evaluation -= 8
                 #Checking for vertical 2 connections
                 elif v_connected2_player1 in columnString:
                     board_evaluation += 2
@@ -223,7 +221,7 @@ class StudentAgent(Agent):
                     board_evaluation += 5
                 #Checking for opponent vertical 3
                 elif v_connected2_player1 in columnString:
-                    board_evaluation -= 4
+                    board_evaluation -= 8
                 #Checking for vertical 2 connections
                 elif v_connected2_player2 in columnString:
                     board_evaluation += 2
@@ -248,7 +246,7 @@ class StudentAgent(Agent):
                     board_evaluation += 5
                 #checking for opponent open 3 connected, defend if possible
                 elif any(x in checkString for x in h_connected3_player2):
-                    board_evaluation -= 4
+                    board_evaluation -= 8
                 #Checking for possible open 2 in a row
                 elif any(x in checkString for x in h_connected2_player1):
                     board_evaluation += 2
@@ -270,7 +268,7 @@ class StudentAgent(Agent):
                     board_evaluation += 5
                 #checking for opponent open 3 connected, defend if possible
                 elif any(x in checkString for x in h_connected3_player1):
-                    board_evaluation -= 4
+                    board_evaluation -= 8
                 #Checking for possible open 2 in a row
                 elif any(x in checkString for x in h_connected2_player2):
                     board_evaluation += 2
@@ -294,7 +292,7 @@ class StudentAgent(Agent):
                     board_evaluation += 5
                 #checking for opponent open 3 connected, defend if possible
                 elif any(x in checkString for x in h_connected3_player2):
-                    board_evaluation -= 4
+                    board_evaluation -= 8
                 #Checking for possible open 2 in a row
                 elif any(x in checkString for x in h_connected2_player1):
                     board_evaluation += 2
@@ -316,7 +314,7 @@ class StudentAgent(Agent):
                     board_evaluation += 5
                 #checking for opponent open 3 connected, defend if possible
                 elif any(x in checkString for x in h_connected3_player1):
-                    board_evaluation -= 4
+                    board_evaluation -= 8
                 #Checking for possible open 2 in a row
                 elif any(x in checkString for x in h_connected2_player2):
                     board_evaluation += 2
