@@ -3,11 +3,15 @@ from connectfour.agents.agent import Agent
 import random
 import copy
 
+PLAYER_1 = 1
+PLAYER_2 = 2
+PLAYER_1_WIN = "1111"
+PLAYER_2_WIN = "2222"
+
 class StudentAgent(Agent):
     def __init__(self, name):
         super().__init__(name)
-        self.MaxDepth = 1
-
+        self.MaxDepth = 4
 
     def get_move(self, board):
         """
@@ -18,7 +22,7 @@ class StudentAgent(Agent):
             A tuple of two integers, (row, col)
         """
 
-
+        #Game over, no need for moves
 
         valid_moves = board.valid_moves()
         vals = []
@@ -40,11 +44,11 @@ class StudentAgent(Agent):
             #Board is empty, best move is center
             return 5, 3
         else:
+            #Not starting first, determine best move using MiniMax
             return bestMove
 
     def dfMiniMax(self, board, depth):
         # Goal return column with maximized scores of all possible next states
-        
         if depth == self.MaxDepth:
             return self.evaluateBoardState(board)
 
@@ -67,219 +71,72 @@ class StudentAgent(Agent):
         else:
             bestVal = max(vals)
 
-        return bestVal
+        return bestVal   
 
     def evaluateBoardState(self, board):
-        """
-        Your evaluation function should look at the current state and return a score for it. 
-        As an example, the random agent provided works as follows:
-            If the opponent has won this game, return -1.
-            If we have won the game, return 1.
-            If neither of the players has won, return a random number.
-        """
-        
-        """
-        These are the variables and functions for board objects which may be helpful when creating your Agent.
-        Look into board.py for more information/descriptions of each, or to look for any other definitions which may help you.
 
-        Board Variables:
-            board.width 
-            board.height
-            board.last_move
-            board.num_to_connect
-            board.winning_zones
-            board.score_array 
-            board.current_player_score
+        #Arrays used for checking substrings of connections
+        connected3_player1 = ['0111','1110','1101','1011']
+        connected3_player2 = ['0222','2220','2202','2022']
+        connected2_player1 = ['0011','1100','0110','1010','0101']
+        connected2_player2 = ['0022','2200','0220','0202','2020']
 
-        Board Functions:
-            get_cell_value(row, col)
-            try_move(col)
-            valid_move(row, col)
-            valid_moves()
-            terminal(self)
-            legal_moves()
-            next_state(turn)
-            winner()
-        """
-        #return random.uniform(-1, 1)
-
-        current_score = 0
+        board_evaluation = 0
         current_player = self.id
+        opponent = PLAYER_1
+        if current_player == PLAYER_1:
+            opponent = PLAYER_2
 
-        #Horizontal check
+        #HORIZONTAL CHECK
+        #Loop through all rows of the board
         for row in board.board:
-            curr = row[0]
-            same_count = 1
-            for i in range(1, board.width):
-                if row[i] == curr:
-                    same_count += 1
-                    if same_count == 2 and curr != 0:
-                        if curr == current_player:
-                            current_score += 10
-                        else:
-                            current_score -= 10
-                else:
-                    same_count = 1
-                    curr = row[i]
+            connected = 1
+            #Concatenate row into a single string for easier evalutation
+            rowString = ''.join(str(e) for e in row)
+            #Scan row for connections
+            #Assign board evaluation based on PLAYER_1 playing
+            if current_player == PLAYER_1:
+                #Checking for a loss, this results in worst score -100
+                if PLAYER_2_WIN in rowString:
+                    board_evaluation -= 100
+                #Checking for 4 connected, resulting in a win, add big number to evaluation
+                elif PLAYER_1_WIN in rowString:
+                    board_evaluation += 100
+                #Checking for any open 3 connected, good chance at victory
+                elif any(x in rowString for x in connected3_player1):
+                    board_evaluation += 5
+                #checking for opponent open 3 connected, defend if possible
+                elif any(x in rowString for x in connected3_player2):
+                    board_evaluation -= 8
+                #Checking for possible open 2 in a row
+                elif any(x in rowString for x in connected2_player1):
+                    board_evaluation += 2
+                #checking for opponent connect 2 in a row, less priority
+                elif any(x in rowString for x in connected2_player2):
+                    board_evaluation -= 1
 
-        for row in board.board:
-            curr = row[0]
-            same_count = 1
-            for i in range(1, board.width):
-                if row[i] == curr:
-                    same_count += 1
-                    if same_count == 3 and curr != 0:
-                        if curr == current_player:
-                            current_score += 100
-                        else:
-                            current_score -= 100
-                else:
-                    same_count = 1
-                    curr = row[i]
+            #Assign board evaluation based on PLAYER_2 playing
+            else:
+                #Checking for a loss, this results in worst score -100
+                if PLAYER_1_WIN in rowString:
+                    board_evaluation -= 100
+                #Checking for 4 connected, resulting in a win, add big number to evaluation
+                elif PLAYER_2_WIN in rowString:
+                    board_evaluation += 100
+                #Checking for any open 3 connected, good chance at victory
+                elif any(x in rowString for x in connected3_player2):
+                    board_evaluation += 5
+                #checking for opponent open 3 connected, defend if possible
+                elif any(x in rowString for x in connected3_player1):
+                    board_evaluation -= 8
+                #Checking for possible open 2 in a row
+                elif any(x in rowString for x in connected2_player2):
+                    board_evaluation += 2
+                #checking for opponent connect 2 in a row, less priority
+                elif any(x in rowString for x in connected2_player1):
+                    board_evaluation -= 1
+        
+        #VERTICAL CHECK
+        #WORKING ON IT
 
-        for row in board.board:
-            curr = row[0]
-            same_count = 1
-            for i in range(1, board.width):
-                if row[i] == curr:
-                    same_count += 1
-                    if same_count == 4 and curr != 0:
-                        if curr == current_player:
-                            current_score += 1000
-                        else:
-                            current_score -= 1000
-                else:
-                    same_count = 1
-                    curr = row[i]
-
-
-        #vertical check
-        for i in range(board.width):
-            same_count = 1
-            curr = board.board[0][i]
-            for j in range(1, board.height):
-                if board.board[j][i] == curr:
-                    same_count += 1
-                    if same_count == 2 and curr != 0:
-                        if curr == current_player:
-                            current_score += 10
-                        else:
-                            current_score -= 10
-                    else:
-                        same_count = 1
-                        curr = board.board[j][i]
-
-        for i in range(board.width):
-            same_count = 1
-            curr = board.board[0][i]
-            for j in range(1, board.height):
-                if board.board[j][i] == curr:
-                    same_count += 1
-                    if same_count == 3 and curr != 0:
-                        if curr == current_player:
-                            current_score += 100
-                        else:
-                            current_score -= 100
-                    else:
-                        same_count = 1
-                        curr = board.board[j][i]
-
-        for i in range(board.width):
-            same_count = 1
-            curr = board.board[0][i]
-            for j in range(1, board.height):
-                if board.board[j][i] == curr:
-                    same_count += 1
-                    if same_count == 4 and curr != 0:
-                        if curr == current_player:
-                            current_score += 1000
-                        else:
-                            current_score -= 1000
-                    else:
-                        same_count = 1
-                        curr = board.board[j][i]
-
-        #diagonal check
-        boards = [
-            board.board,
-            [row[::-1] for row in copy.deepcopy(board.board)]
-        ]
-        for b in boards:
-            for i in range(board.width - 2 + 1):
-                for j in range(board.height - 2 + 1):
-                    if i > 0 and j > 0:
-                        continue
-
-                    same_count = 1
-                    curr = b[j][i]
-                    k, m = j + 1, i + 1
-                    while k < board.height and m < board.width:
-                        if b[k][m] == curr:
-                            same_count += 1
-                            if same_count is 2 and curr != 0:
-                                if curr == current_player:
-                                    current_score += 10
-                                else:
-                                    current_score -= 10
-                            else:
-                                same_count = 1
-                                curr = b[k][m]
-                        k += 1
-                        m += 1
-
-        boards = [
-            board.board,
-            [row[::-1] for row in copy.deepcopy(board.board)]
-        ]
-        for b in boards:
-            for i in range(board.width - 3 + 1):
-                for j in range(board.height - 3 + 1):
-                    if i > 0 and j > 0:
-                        continue
-
-                    same_count = 1
-                    curr = b[j][i]
-                    k, m = j + 1, i + 1
-                    while k < board.height and m < board.width:
-                        if b[k][m] == curr:
-                            same_count += 1
-                            if same_count is 3 and curr != 0:
-                                if curr == current_player:
-                                    current_score += 100
-                                else:
-                                    current_score -= 100
-                            else:
-                                same_count = 1
-                                curr = b[k][m]
-                        k += 1
-                        m += 1
-
-
-        boards = [
-            board.board,
-            [row[::-1] for row in copy.deepcopy(board.board)]
-        ]
-        for b in boards:
-            for i in range(board.width - 4 + 1):
-                for j in range(board.height - 4 + 1):
-                    if i > 0 and j > 0:
-                        continue
-
-                    same_count = 1
-                    curr = b[j][i]
-                    k, m = j + 1, i + 1
-                    while k < board.height and m < board.width:
-                        if b[k][m] == curr:
-                            same_count += 1
-                            if same_count is 4 and curr != 0:
-                                if curr == current_player:
-                                    current_score += 1000
-                                else:
-                                    current_score -= 1000
-                            else:
-                                same_count = 1
-                                curr = b[k][m]
-                        k += 1
-                        m += 1
-
-        return current_score
+        return board_evaluation
