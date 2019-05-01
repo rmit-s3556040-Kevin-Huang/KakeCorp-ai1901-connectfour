@@ -11,7 +11,7 @@ PLAYER_2_WIN = "2222"
 class StudentAgent(Agent):
     def __init__(self, name):
         super().__init__(name)
-        self.MaxDepth = 1
+        self.MaxDepth = 4
 
     def get_move(self, board):
         """
@@ -86,8 +86,8 @@ class StudentAgent(Agent):
         #Vertical Checks, Reversed due to how columns work
         v_connected3_player1 = "0111"
         v_connected3_player2 = "0222"
-        v_connected2_player1 = "011"
-        v_connected2_player2 = "022"
+        v_connected2_player1 = "0011"
+        v_connected2_player2 = "0022"
 
         board_evaluation = 0
         #Assign player ID's
