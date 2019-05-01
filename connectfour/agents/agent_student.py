@@ -11,7 +11,7 @@ PLAYER_2_WIN = "2222"
 class StudentAgent(Agent):
     def __init__(self, name):
         super().__init__(name)
-        self.MaxDepth = 4
+        self.MaxDepth = 1
 
     def get_move(self, board):
         """
@@ -75,13 +75,22 @@ class StudentAgent(Agent):
 
     def evaluateBoardState(self, board):
 
-        #Arrays used for checking substrings of connections
-        connected3_player1 = ['0111','1110','1101','1011']
-        connected3_player2 = ['0222','2220','2202','2022']
-        connected2_player1 = ['0011','1100','0110','1010','0101']
-        connected2_player2 = ['0022','2200','0220','0202','2020']
+        #Values used for checking board evaluation
+        
+        #Horizontal Checks
+        h_connected3_player1 = ['0111','1110','1101','1011']
+        h_connected3_player2 = ['0222','2220','2202','2022']
+        h_connected2_player1 = ['0011','1100','0110','1010','0101']
+        h_connected2_player2 = ['0022','2200','0220','0202','2020']
+
+        #Vertical Checks, Reversed due to how columns work
+        v_connected3_player1 = "0111"
+        v_connected3_player2 = "0222"
+        v_connected2_player1 = "011"
+        v_connected2_player2 = "022"
 
         board_evaluation = 0
+        #Assign player ID's
         current_player = self.id
         opponent = PLAYER_1
         if current_player == PLAYER_1:
@@ -90,11 +99,10 @@ class StudentAgent(Agent):
         #HORIZONTAL CHECK
         #Loop through all rows of the board
         for row in board.board:
-            connected = 1
             #Concatenate row into a single string for easier evalutation
             rowString = ''.join(str(e) for e in row)
-            #Scan row for connections
-            #Assign board evaluation based on PLAYER_1 playing
+            
+            #Assign horizontal evaluation based on PLAYER_1 playing
             if current_player == PLAYER_1:
                 #Checking for a loss, this results in worst score -100
                 if PLAYER_2_WIN in rowString:
@@ -103,19 +111,19 @@ class StudentAgent(Agent):
                 elif PLAYER_1_WIN in rowString:
                     board_evaluation += 100
                 #Checking for any open 3 connected, good chance at victory
-                elif any(x in rowString for x in connected3_player1):
+                elif any(x in rowString for x in h_connected3_player1):
                     board_evaluation += 5
                 #checking for opponent open 3 connected, defend if possible
-                elif any(x in rowString for x in connected3_player2):
+                elif any(x in rowString for x in h_connected3_player2):
                     board_evaluation -= 8
                 #Checking for possible open 2 in a row
-                elif any(x in rowString for x in connected2_player1):
+                elif any(x in rowString for x in h_connected2_player1):
                     board_evaluation += 2
                 #checking for opponent connect 2 in a row, less priority
-                elif any(x in rowString for x in connected2_player2):
+                elif any(x in rowString for x in h_connected2_player2):
                     board_evaluation -= 1
 
-            #Assign board evaluation based on PLAYER_2 playing
+            #Assign horizontal evaluation based on PLAYER_2 playing
             else:
                 #Checking for a loss, this results in worst score -100
                 if PLAYER_1_WIN in rowString:
@@ -124,19 +132,65 @@ class StudentAgent(Agent):
                 elif PLAYER_2_WIN in rowString:
                     board_evaluation += 100
                 #Checking for any open 3 connected, good chance at victory
-                elif any(x in rowString for x in connected3_player2):
+                elif any(x in rowString for x in h_connected3_player2):
                     board_evaluation += 5
                 #checking for opponent open 3 connected, defend if possible
-                elif any(x in rowString for x in connected3_player1):
+                elif any(x in rowString for x in h_connected3_player1):
                     board_evaluation -= 8
                 #Checking for possible open 2 in a row
-                elif any(x in rowString for x in connected2_player2):
+                elif any(x in rowString for x in h_connected2_player2):
                     board_evaluation += 2
                 #checking for opponent connect 2 in a row, less priority
-                elif any(x in rowString for x in connected2_player1):
+                elif any(x in rowString for x in h_connected2_player1):
                     board_evaluation -= 1
         
         #VERTICAL CHECK
-        #WORKING ON IT
+        #Loop through all columns
+        for i in range(board.width):
+            columnString = ''
+            #Generating string so evaltion can be done to column
+            for j in range(board.height):
+                columnString += str(board.board[j][i])
+            #Assign vertical evaluation based on PLAYER_1 playing
+            if current_player == PLAYER_1:
+                #Checking for a loss, this results in worst score -100
+                if PLAYER_2_WIN in columnString:
+                    board_evaluation -= 100
+                #4 vertical connected, Win
+                elif PLAYER_1_WIN in columnString:
+                    board_evaluation += 100
+                #Checking for any open 3 vertical connected
+                elif v_connected3_player1 in columnString:
+                    board_evaluation += 5
+                #Checking for opponent vertical 3, defend priority
+                elif v_connected2_player2 in columnString:
+                    board_evaluation -= 8
+                #Checking for vertical 2 connections
+                elif v_connected2_player1 in columnString:
+                    board_evaluation += 2
+                #Checking for opponent 2 connections
+                elif v_connected2_player2 in columnString:
+                    board_evaluation -= 1
+
+            #Assign vertical evaluation based on PLAYER_2 playing
+            else:
+                #Checking for a loss, this results in worst score -100
+                if PLAYER_1_WIN in columnString:
+                    board_evaluation -= 100
+                #4 vertical connected, Win
+                elif PLAYER_2_WIN in columnString:
+                    board_evaluation += 100
+                #Checking for any open 3 vertical connected
+                elif v_connected3_player2 in columnString:
+                    board_evaluation += 5
+                #Checking for opponent vertical 3, defend priority
+                elif v_connected2_player1 in columnString:
+                    board_evaluation -= 8
+                #Checking for vertical 2 connections
+                elif v_connected2_player2 in columnString:
+                    board_evaluation += 2
+                #Checking for opponent 2 connections
+                elif v_connected2_player1 in columnString:
+                    board_evaluation -= 1
 
         return board_evaluation
