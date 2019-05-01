@@ -76,7 +76,6 @@ class StudentAgent(Agent):
     def evaluateBoardState(self, board):
 
         #Values used for checking board evaluation
-        
         #Horizontal Checks
         h_connected3_player1 = ['0111','1110','1101','1011']
         h_connected3_player2 = ['0222','2220','2202','2022']
@@ -234,7 +233,95 @@ class StudentAgent(Agent):
 
         #DIAGONAL CHECKS
         #POSITIVE SLOPE
+        for checkString in positive_slopes:
+            #Diagonal evaluation based on PLAYER_1 playing
+            if current_player == PLAYER_1:
+                #Checking for a loss, this results in worst score -100
+                if PLAYER_2_WIN in checkString:
+                    board_evaluation -= 100
+                #Checking for 4 connected, resulting in a win, add big number to evaluation
+                elif PLAYER_1_WIN in checkString:
+                    board_evaluation += 100
+                #USES H_CONNECTED as similar checks
+                #Checking for any open 3 connected, good chance at victory
+                elif any(x in checkString for x in h_connected3_player1):
+                    board_evaluation += 5
+                #checking for opponent open 3 connected, defend if possible
+                elif any(x in checkString for x in h_connected3_player2):
+                    board_evaluation -= 4
+                #Checking for possible open 2 in a row
+                elif any(x in checkString for x in h_connected2_player1):
+                    board_evaluation += 2
+                #checking for opponent connect 2 in a row, less priority
+                elif any(x in checkString for x in h_connected2_player2):
+                    board_evaluation -= 1
+
+            #Diagonal evaluation based on PLAYER_2 playing
+            else:
+                #Checking for a loss, this results in worst score -100
+                if PLAYER_1_WIN in checkString:
+                    board_evaluation -= 100
+                #Checking for 4 connected, resulting in a win, add big number to evaluation
+                elif PLAYER_2_WIN in checkString:
+                    board_evaluation += 100
+                #USES H_CONNECTED as similar checks
+                #Checking for any open 3 connected, good chance at victory
+                elif any(x in checkString for x in h_connected3_player2):
+                    board_evaluation += 5
+                #checking for opponent open 3 connected, defend if possible
+                elif any(x in checkString for x in h_connected3_player1):
+                    board_evaluation -= 4
+                #Checking for possible open 2 in a row
+                elif any(x in checkString for x in h_connected2_player2):
+                    board_evaluation += 2
+                #checking for opponent connect 2 in a row, less priority
+                elif any(x in checkString for x in h_connected2_player1):
+                    board_evaluation -= 1
 
         #NEGATIVE SLOPE
+        for checkString in negative_slopes:
+            #Diagonal evaluation based on PLAYER_1 playing
+            if current_player == PLAYER_1:
+                #Checking for a loss, this results in worst score -100
+                if PLAYER_2_WIN in checkString:
+                    board_evaluation -= 100
+                #Checking for 4 connected, resulting in a win, add big number to evaluation
+                elif PLAYER_1_WIN in checkString:
+                    board_evaluation += 100
+                #USES H_CONNECTED as similar checks
+                #Checking for any open 3 connected, good chance at victory
+                elif any(x in checkString for x in h_connected3_player1):
+                    board_evaluation += 5
+                #checking for opponent open 3 connected, defend if possible
+                elif any(x in checkString for x in h_connected3_player2):
+                    board_evaluation -= 4
+                #Checking for possible open 2 in a row
+                elif any(x in checkString for x in h_connected2_player1):
+                    board_evaluation += 2
+                #checking for opponent connect 2 in a row, less priority
+                elif any(x in checkString for x in h_connected2_player2):
+                    board_evaluation -= 1
+
+            #Diagonal evaluation based on PLAYER_2 playing
+            else:
+                #Checking for a loss, this results in worst score -100
+                if PLAYER_1_WIN in checkString:
+                    board_evaluation -= 100
+                #Checking for 4 connected, resulting in a win, add big number to evaluation
+                elif PLAYER_2_WIN in checkString:
+                    board_evaluation += 100
+                #USES H_CONNECTED as similar checks
+                #Checking for any open 3 connected, good chance at victory
+                elif any(x in checkString for x in h_connected3_player2):
+                    board_evaluation += 5
+                #checking for opponent open 3 connected, defend if possible
+                elif any(x in checkString for x in h_connected3_player1):
+                    board_evaluation -= 4
+                #Checking for possible open 2 in a row
+                elif any(x in checkString for x in h_connected2_player2):
+                    board_evaluation += 2
+                #checking for opponent connect 2 in a row, less priority
+                elif any(x in checkString for x in h_connected2_player1):
+                    board_evaluation -= 1
 
         return board_evaluation
