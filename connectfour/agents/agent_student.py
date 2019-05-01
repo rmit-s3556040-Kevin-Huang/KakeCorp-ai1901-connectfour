@@ -89,7 +89,46 @@ class StudentAgent(Agent):
         v_connected2_player1 = "0011"
         v_connected2_player2 = "0022"
 
+        #Positive slope diagonal
+        positive_slopes = []
+        #loop through board diagonally and append them as strings
+        for line in range(1, (board.height + board.width)):
+            slopeString = ""
+            startingColumn = max(0, line - board.height)
+            count = min(line, (board.width - startingColumn), board.height)
+            for j in range(0, count):
+                slopeString += str(board.board[min(board.height, line) - j - 1][startingColumn + j])
+            #Append only necessary strings
+            if len(slopeString) >= 4:
+                positive_slopes.append(slopeString)
+
+        #Negative Slop diagonal
+        flippedBoard = [row[:] for row in board.board]
+        count = 0
+        for row in flippedBoard:
+            if count == 6:
+                count = 0
+            row = list(reversed(row))
+            #adding reversed values to flippedBoard itself
+            for i in range(len(row)):
+                flippedBoard[count][i] = row[i]
+            count += 1
+
+        negative_slopes = []
+        #loop through board diagonally and append them as strings
+        for line in range(1, (board.height + board.width)):
+            slopeString = ""
+            startingColumn = max(0, line - board.height)
+            count = min(line, (board.width - startingColumn), board.height)
+            for j in range(0, count):
+                slopeString += str(flippedBoard[min(board.height, line) - j - 1][startingColumn + j])
+            #Append only necessary strings
+            if len(slopeString) >= 4:
+               negative_slopes.append(slopeString)
+
+        #Initial board evaluation 0
         board_evaluation = 0
+
         #Assign player ID's
         current_player = self.id
         opponent = PLAYER_1
@@ -115,7 +154,7 @@ class StudentAgent(Agent):
                     board_evaluation += 5
                 #checking for opponent open 3 connected, defend if possible
                 elif any(x in rowString for x in h_connected3_player2):
-                    board_evaluation -= 8
+                    board_evaluation -= 4
                 #Checking for possible open 2 in a row
                 elif any(x in rowString for x in h_connected2_player1):
                     board_evaluation += 2
@@ -136,7 +175,7 @@ class StudentAgent(Agent):
                     board_evaluation += 5
                 #checking for opponent open 3 connected, defend if possible
                 elif any(x in rowString for x in h_connected3_player1):
-                    board_evaluation -= 8
+                    board_evaluation -= 4
                 #Checking for possible open 2 in a row
                 elif any(x in rowString for x in h_connected2_player2):
                     board_evaluation += 2
@@ -162,9 +201,9 @@ class StudentAgent(Agent):
                 #Checking for any open 3 vertical connected
                 elif v_connected3_player1 in columnString:
                     board_evaluation += 5
-                #Checking for opponent vertical 3, defend priority
+                #Checking for opponent vertical 3
                 elif v_connected2_player2 in columnString:
-                    board_evaluation -= 8
+                    board_evaluation -= 4
                 #Checking for vertical 2 connections
                 elif v_connected2_player1 in columnString:
                     board_evaluation += 2
@@ -183,14 +222,19 @@ class StudentAgent(Agent):
                 #Checking for any open 3 vertical connected
                 elif v_connected3_player2 in columnString:
                     board_evaluation += 5
-                #Checking for opponent vertical 3, defend priority
+                #Checking for opponent vertical 3
                 elif v_connected2_player1 in columnString:
-                    board_evaluation -= 8
+                    board_evaluation -= 4
                 #Checking for vertical 2 connections
                 elif v_connected2_player2 in columnString:
                     board_evaluation += 2
                 #Checking for opponent 2 connections
                 elif v_connected2_player1 in columnString:
                     board_evaluation -= 1
+
+        #DIAGONAL CHECKS
+        #POSITIVE SLOPE
+
+        #NEGATIVE SLOPE
 
         return board_evaluation
